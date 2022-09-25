@@ -5,6 +5,8 @@ matrix = [[1, 1, 2, 0, 0, 6], [0, 2, 2, -1, 1, 6], [1, -1, 6, 1, 1, 12]]
 originalEquation = [-1, -1, -1, -1, -1]
 
 
+
+
 # Функции для просчета матрицы
 
 # Считаем нижнюю линию матрицы
@@ -86,6 +88,22 @@ def changeFreeAndBazisMethod(bazisElem, freeElem, i, j):
     return copyBazisElems, copyFreeElems
 
 
+def filenameGenerate(originalEquation):
+    filename = [str(elem)+'x'+str(index) for index,elem in enumerate(originalEquation)]
+    filename = 'F(x)='+''.join(filename)+'.txt'
+    return filename
+    
+
+def logs(matrix,bazisElem,freeElem,originalEquation,i,j):
+    filename= filenameGenerate(originalEquation)
+    strMatrix ='Choosed element i:'+str(i)+' j:'+str(j)+' = '+str(matrix[i][j])
+    strMatrix += '\nMatrix after counting: \n'
+    strMatrix += '\n | '+' | '.join([str(elem) for elem in bazisElem]) + ' |'
+    for index, elem in enumerate(matrix):
+        strMatrix += "\n"+str(freeElem[index])+"| "+ ' | '.join([str(e) for e in elem])
+    with open(filename, 'a') as the_file:
+        the_file.write(strMatrix+'\n')
+
 def iterationMethodBazis(matrix, i, j, bazisElem, freeElem):
     deepCopyMatrix = copy.deepcopy(matrix)
     deepCopyMatrix = countSupportRow(deepCopyMatrix, i, j)
@@ -93,6 +111,7 @@ def iterationMethodBazis(matrix, i, j, bazisElem, freeElem):
     deepCopyMatrix = countSupportColumn(deepCopyMatrix, i, j)
     bazisElem, freeElem = changeFreeAndBazisMethod(bazisElem, freeElem, i, j)
     deepCopyMatrix = deleteColumn(deepCopyMatrix, i, j)
+    logs(deepCopyMatrix,bazisElem,freeElem,originalEquation,i,j)
     return deepCopyMatrix, bazisElem, freeElem
 
 
@@ -155,6 +174,7 @@ def iterationMethodOriginal(matrix, i, j, bazisElem, freeElem):
     deepCopyMatrix = countRows(deepCopyMatrix, i, j)
     deepCopyMatrix = countSupportColumn(deepCopyMatrix, i, j)
     bazisElem, freeElem = changeFreeAndOriginal(bazisElem, freeElem, i, j)
+    logs(deepCopyMatrix,bazisElem,freeElem,originalEquation,i,j)
     return deepCopyMatrix, bazisElem, freeElem
 
 
@@ -224,4 +244,12 @@ def createSummF():
 answer = createAnswer()
 summ = createSummF()
 
+
 print('Ответ : ',answer,"F(x)=",summ)
+
+answer = [str(el) for el in answer]
+strA = '('+','.join(answer)+')'+'  F(x)='+str(summ)
+
+filename= filenameGenerate(originalEquation)
+with open(filename, 'a') as the_file:
+        the_file.write('Answer:+'+strA )
